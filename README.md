@@ -12,10 +12,6 @@ Alternatively, via the CLI `dotnet add package TcpFrame`
 
 Check the examples folder for a working example.
 
-## TODO
-
--   Encryption
-
 ### Client
 
 ```csharp

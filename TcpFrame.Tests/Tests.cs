@@ -1,5 +1,3 @@
-using Xunit.Sdk;
-
 namespace TcpFrame.Tests;
 
 public class Tests

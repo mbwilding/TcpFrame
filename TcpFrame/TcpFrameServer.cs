@@ -38,6 +38,8 @@ public class TcpFrameServer : TcpFrameBase
             .ChildHandler(new ActionChannelInitializer<IChannel>(channel =>
             {
                 IChannelPipeline pipeline = channel.Pipeline;
+                if (Config.Certificate != null)
+                    pipeline.AddLast("tls", Config.GetEncryption());
                 pipeline.AddLast("framing-enc", Config.GetEncoder());
                 pipeline.AddLast("framing-dec", Config.GetDecoder());
                 pipeline.AddLast("handler", new TcpHandlerServer(this));
