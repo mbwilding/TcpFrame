@@ -4,11 +4,9 @@ TcpFrame is a C# library that provides event-driven TCP framing capabilities. It
 
 ## Installation
 
-Navigate to whatever directory in the CLI you want the TcpFrame directory to appear, then add a project reference.
+Search for the nuget `TcpFrame` and add it to your project.
 
-`git submodule add https://github.com/mbwilding/TcpFrame TcpFrame`
-
-To update to the latest version later: `git submodule update --remote`
+Alternatively, via the CLI `dotnet add package TcpFrame`
 
 ## Usage
 
