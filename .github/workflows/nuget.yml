@@ -13,11 +13,8 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           dotnet-version: 7.0.x
-          source-url: https://api.nuget.org/v3/index.json
 
       - name: Restore dependencies
         run: dotnet restore ./TcpFrame/TcpFrame.csproj
@@ -33,4 +30,6 @@ jobs:
         run: dotnet pack ./TcpFrame/TcpFrame.csproj --no-restore --configuration Release /p:PackageVersion=${{ steps.vars.outputs.version }} --output out
 
       - name: Push
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
