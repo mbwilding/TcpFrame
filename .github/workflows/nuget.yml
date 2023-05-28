@@ -2,29 +2,34 @@ name: Publish NuGet
 
 on:
   push:
-    branches: [ main ]  # Trigger the workflow on push or pull request to main branch
+    branches: [ main ]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  # Checks-out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v3
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
 
-      - name: Restore dependencies
+      - name: Restore packages
         run: dotnet restore ./TcpFrame/TcpFrame.csproj
 
       - name: Build
         run: dotnet build ./TcpFrame/TcpFrame.csproj --configuration Release --no-restore
 
+      - name: Test
+        run: dotnet test ./TcpFrame.Tests/TcpFrame.Tests.csproj --configuration Release --no-restore
+
       - name: Set Version
         id: vars
-        run: echo ::set-output name=version::1.0.$GITHUB_RUN_NUMBER
+        run: |
+          echo ::set-output name=version::1.0.$GITHUB_RUN_NUMBER
+          echo "Version: 1.0.$GITHUB_RUN_NUMBER"
 
       - name: Pack
         run: dotnet pack ./TcpFrame/TcpFrame.csproj --no-restore --configuration Release /p:PackageVersion=${{ steps.vars.outputs.version }} --output out
