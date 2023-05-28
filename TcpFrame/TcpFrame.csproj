@@ -4,9 +4,18 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+        <IsPackable>true</IsPackable>
+        <PackageId>TcpFrame</PackageId>
+        <Authors>Matthew Wilding</Authors>
+        <Company>Wilding Studios</Company>
+        <Description>TCP framing library that is event driven</Description>
+        <Copyright>Copyright 2023 Matthew Wilding</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>../README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="" />
         <PackageReference Include="DotNetty.Codecs" Version="0.7.5" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-preview.4.23259.5" />
     </ItemGroup>
