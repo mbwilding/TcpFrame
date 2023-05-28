@@ -1,0 +1,38 @@
+name: Publish NuGet
+
+on:
+  push:
+    branches: [ main ]  # Trigger the workflow on push or pull request to main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore ./TcpFrame/TcpFrame.csproj
+
+      - name: Build
+        run: dotnet build ./TcpFrame/TcpFrame.csproj --configuration Release --no-restore
+
+      - name: Set Version
+        id: vars
+        run: echo ::set-output name=version::1.0.$GITHUB_RUN_NUMBER
+
+      - name: Pack
+        run: dotnet pack ./TcpFrame/TcpFrame.csproj --no-restore --configuration Release /p:PackageVersion=${{ steps.vars.outputs.version }} --output out
+
+      - name: Push
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+          source-url: https://api.nuget.org/v3/index.json
+        run: |
+          echo "NUGET_API_KEY=${{ secrets.NUGET_API_KEY }}" | dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
