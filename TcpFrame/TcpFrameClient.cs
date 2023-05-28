@@ -47,6 +47,13 @@ public class TcpFrameClient : TcpFrameBase
             }));
     }
 
+    public async Task<bool> ConnectAsync(string host, ushort port)
+    {
+        Host = host;
+        Port = port;
+        return await ConnectAsync();
+    }
+    
     public async Task<bool> ConnectAsync()
     {
         try
