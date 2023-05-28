@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,9 +22,6 @@ jobs:
       - name: Build
         run: dotnet build ./TcpFrame/TcpFrame.csproj --configuration Release --no-restore
 
-      # - name: Test
-      #   run: dotnet test --no-restore --verbosity normal
-
       - name: Set Version
         id: vars
         run: echo ::set-output name=version::1.0.$GITHUB_RUN_NUMBER
@@ -38,7 +34,5 @@ jobs:
         with:
           dotnet-version: 7.0.x
           source-url: https://api.nuget.org/v3/index.json
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        
-        run: dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
+        run: |
+          echo "NUGET_API_KEY=${{ secrets.NUGET_API_KEY }}" | dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
