@@ -1,4 +1,4 @@
-﻿# TcpFrame C# Library
+﻿# TcpFrame C# Library [![NuGet](https://img.shields.io/nuget/v/TcpFrame?style=plastic)](https://www.nuget.org/packages/TcpFrame/)
 
 TcpFrame is a C# library that provides event-driven TCP framing capabilities. It simplifies the process of handling framed data over TCP connections, allowing you to focus on processing the received frames.
 
