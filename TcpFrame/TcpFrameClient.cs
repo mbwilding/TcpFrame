@@ -144,13 +144,13 @@ public class TcpFrameClient : TcpFrameBase
 
             if (_tcpFrame.AutoReconnect)
             {
-                await Task.Delay(_tcpFrame.ReconnectInitialDelay);
+                await Task.Delay(_tcpFrame.ReconnectInitialDelay).ConfigureAwait(false);
 
                 while (!_tcpFrame.IsActive)
                 {
                     _tcpFrame.Logger?.LogDebug("Attempting reconnection");
-                    await _tcpFrame.ConnectAsync();
-                    await Task.Delay(_tcpFrame.ReconnectDelay);
+                    await _tcpFrame.ConnectAsync().ConfigureAwait(false);
+                    await Task.Delay(_tcpFrame.ReconnectDelay).ConfigureAwait(false);
                 }
             }
         }
@@ -167,7 +167,7 @@ public class TcpFrameClient : TcpFrameBase
 
         public override async void ExceptionCaught(IChannelHandlerContext ctx, Exception ex)
         {
-            await ctx.CloseAsync();
+            await ctx.CloseAsync().ConfigureAwait(false);
             // _tcpFrame.Logger?.LogError(ex, "Read failure");
         }
     }
@@ -179,7 +179,7 @@ public class TcpFrameClient : TcpFrameBase
             return "127.0.0.1";
         }
         
-        var addresses = await Dns.GetHostAddressesAsync(host);
+        var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
         var address = addresses.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
         return address?.ToString();
     }
@@ -187,6 +187,6 @@ public class TcpFrameClient : TcpFrameBase
     public new async ValueTask DisposeAsync()
     {
         await DisconnectAsync().ConfigureAwait(false);
-        await base.DisposeAsync();
+        await base.DisposeAsync().ConfigureAwait(false);
     }
 }

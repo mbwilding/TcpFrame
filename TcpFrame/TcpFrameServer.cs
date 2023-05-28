@@ -107,7 +107,7 @@ public class TcpFrameServer : TcpFrameBase
     public async Task SendToAllAsync(byte[] data)
     {
         var sendTasks = ClientChannels.Select(channel => SendAsync(channel, data));
-        await Task.WhenAll(sendTasks);
+        await Task.WhenAll(sendTasks).ConfigureAwait(false);
     }
 
     private class TcpHandlerServer : SimpleChannelInboundHandler<IByteBuffer>
@@ -149,7 +149,7 @@ public class TcpFrameServer : TcpFrameBase
 
         public override async void ExceptionCaught(IChannelHandlerContext ctx, Exception ex)
         {
-            await ctx.CloseAsync();
+            await ctx.CloseAsync().ConfigureAwait(false);
             // _tcpFrame.Logger?.LogError(ex, "Read failure");
         }
     }
@@ -157,6 +157,6 @@ public class TcpFrameServer : TcpFrameBase
     public new async ValueTask DisposeAsync()
     {
         await StopAsync().ConfigureAwait(false);
-        await base.DisposeAsync();
+        await base.DisposeAsync().ConfigureAwait(false);
     }
 }
