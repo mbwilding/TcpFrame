@@ -9,12 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v3  # Checks-out your repository under $GITHUB_WORKSPACE
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
+          source-url: https://api.nuget.org/v3/index.json
 
       - name: Restore dependencies
         run: dotnet restore ./TcpFrame/TcpFrame.csproj
@@ -30,9 +31,6 @@ jobs:
         run: dotnet pack ./TcpFrame/TcpFrame.csproj --no-restore --configuration Release /p:PackageVersion=${{ steps.vars.outputs.version }} --output out
 
       - name: Push
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 7.0.x
-          source-url: https://api.nuget.org/v3/index.json
-        run: |
-          echo "NUGET_API_KEY=${{ secrets.NUGET_API_KEY }}" | dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push ./out/*.nupkg --api-key $NUGET_API_KEY --source "https://api.nuget.org/v3/index.json"
