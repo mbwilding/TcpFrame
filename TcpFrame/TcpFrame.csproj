@@ -12,12 +12,14 @@
         <Copyright>Copyright 2023 Matthew Wilding</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/mbwilding/TcpFrame.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="../README.md" Pack="true" PackagePath="" />
-        <PackageReference Include="DotNetty.Codecs" Version="0.7.5" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+        <None Include="../README.md" Pack="true" PackagePath=""/>
+        <PackageReference Include="DotNetty.Codecs" Version="0.7.5"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0"/>
     </ItemGroup>
 
 </Project>
