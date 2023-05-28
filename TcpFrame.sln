@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpFrame", "TcpFrame\TcpFrame.csproj", "{0711BA83-38AD-4005-85B0-A1240548B686}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{6B09FBC0-1893-40B0-9D03-093F802FF963}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientExample", "Examples\ClientExample\ClientExample.csproj", "{E08E0A22-A8F3-402C-A925-1847D9DCBCEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerExample", "Examples\ServerExample\ServerExample.csproj", "{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0711BA83-38AD-4005-85B0-A1240548B686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0711BA83-38AD-4005-85B0-A1240548B686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0711BA83-38AD-4005-85B0-A1240548B686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0711BA83-38AD-4005-85B0-A1240548B686}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB} = {6B09FBC0-1893-40B0-9D03-093F802FF963}
+		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3} = {6B09FBC0-1893-40B0-9D03-093F802FF963}
+	EndGlobalSection
+EndGlobal
