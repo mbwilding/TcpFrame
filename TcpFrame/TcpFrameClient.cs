@@ -176,16 +176,16 @@ public class TcpFrameClient : TcpFrameBase
         }
     }
 
-    private async Task<string?> GetIPv4AddressAsync(string host)
+    private async Task<IPAddress?> GetIPv4AddressAsync(string host)
     {
         if (string.Equals(Host, Dns.GetHostName(), StringComparison.CurrentCultureIgnoreCase))
         {
-            return "127.0.0.1";
+            return IPAddress.Parse("127.0.0.1");
         }
         
         var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
         var address = addresses.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-        return address?.ToString();
+        return address;
     }
     
     public new async ValueTask DisposeAsync()
