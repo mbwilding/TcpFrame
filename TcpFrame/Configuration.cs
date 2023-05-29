@@ -1,9 +1,6 @@
-using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
-using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Channels;
 
 // ReSharper disable UnusedMember.Global
@@ -19,7 +16,7 @@ public class Configuration
     public General Shared { get; set; } = new();
     public Encoding Encoder { get; set; } = new();
     public Decoding Decoder { get; set; } = new();
-    public X509Certificate2? Certificate { get; private set; }
+    public X509Certificate2? Certificate { get; set; }
 
     public class General
     {
@@ -57,54 +54,9 @@ public class Configuration
         Decoder.FailFast);
 
     #region Certificate
-    
-    internal IChannelHandler GetEncryption()
-    {
-        var tlsOptions = new ServerTlsSettings(Certificate);
-        return new TlsHandler(tlsOptions);
-    }
 
-    public async Task<bool> SetCertificateFromFileAsync(string filePath)
-    {
-        var result = await Helpers.GetFileAsync(filePath);
-        if (!result.Success)
-        {
-            return false;
-        }
+    // public void SetCertificateFromPemFile(string filePath) => Certificate = X509Certificate2.CreateFromPemFile(filePath);
+    // public void SetCertificateFromPemFiles(string certPath, string keyPath) => Certificate = X509Certificate2.CreateFromPemFile(certPath, keyPath);
 
-        Certificate = new X509Certificate2(filePath);
-        return true;
-    }
-
-    public async Task<bool> SetCertificateFromFileAsync(string filePath, string password)
-    {
-        var result = await Helpers.GetFileAsync(filePath);
-        if (!result.Success)
-        {
-            return false;
-        }
-
-        Certificate = new X509Certificate2(filePath, password);
-        return true;
-    }
-
-    public async Task<bool> SetCertificateFromFileAsync(string filePath, SecureString password)
-    {
-        var result = await Helpers.GetFileAsync(filePath);
-        if (!result.Success)
-        {
-            return false;
-        }
-
-        Certificate = new X509Certificate2(filePath, password);
-        return true;
-    }
-
-    public void SetCertificate(byte[] rawData) => Certificate = new X509Certificate2(rawData);
-    public void SetCertificate(byte[] rawData, string password) => Certificate = new X509Certificate2(rawData, password);
-    public void SetCertificate(byte[] rawData, SecureString password) => Certificate = new X509Certificate2(rawData, password);
-    public void SetCertificate(X509Certificate2 certificate) => Certificate = certificate;
-    public void SetCertificate(nint handle) => Certificate = new X509Certificate2(handle);
-    
     #endregion
 }

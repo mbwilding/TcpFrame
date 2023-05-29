@@ -42,7 +42,9 @@ public class TcpFrameClient : TcpFrameBase
             {
                 IChannelPipeline pipeline = channel.Pipeline;
                 if (Config.Certificate != null)
-                    pipeline.AddLast("tls", Config.GetEncryption());
+                {
+                    // pipeline.AddLast("tls", TlsHandler.Client("127.0.0.1", Config.Certificate));
+                }
                 pipeline.AddLast("framing-enc", Config.GetEncoder());
                 pipeline.AddLast("framing-dec", Config.GetDecoder());
                 pipeline.AddLast("handler", new TcpHandlerClient(this));
