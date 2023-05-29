@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using DotNetty.Buffers;
 using DotNetty.Codecs;
@@ -55,8 +56,23 @@ public class Configuration
 
     #region Certificate
 
-    // public void SetCertificateFromPemFile(string filePath) => Certificate = X509Certificate2.CreateFromPemFile(filePath);
-    // public void SetCertificateFromPemFiles(string certPath, string keyPath) => Certificate = X509Certificate2.CreateFromPemFile(certPath, keyPath);
+    public void SetCertificateFromPemFile(string filePath) =>
+        Certificate = SanitizeCertificate(X509Certificate2.CreateFromPemFile(filePath));
+
+    public void SetCertificateFromPemFiles(string certPath, string keyPath) =>
+        Certificate = SanitizeCertificate(X509Certificate2.CreateFromPemFile(certPath, keyPath));
+
+    private X509Certificate2 SanitizeCertificate(X509Certificate2 certificate)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var newCert = new X509Certificate2(certificate.Export(X509ContentType.Pfx));
+            certificate.Dispose();
+            return newCert;
+        }
+
+        return certificate;
+    }
 
     #endregion
 }

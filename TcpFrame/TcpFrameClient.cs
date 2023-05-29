@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
+using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -42,9 +43,7 @@ public class TcpFrameClient : TcpFrameBase
             {
                 IChannelPipeline pipeline = channel.Pipeline;
                 if (Config.Certificate != null)
-                {
-                    // pipeline.AddLast("tls", TlsHandler.Client("127.0.0.1", Config.Certificate));
-                }
+                    pipeline.AddLast("tls", TlsHandler.Client(Host, Config.Certificate));
                 pipeline.AddLast("framing-enc", Config.GetEncoder());
                 pipeline.AddLast("framing-dec", Config.GetDecoder());
                 pipeline.AddLast("handler", new TcpHandlerClient(this));
