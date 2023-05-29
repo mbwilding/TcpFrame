@@ -15,7 +15,9 @@ var logger = loggerFactory.CreateLogger<TcpFrameServer>();
 // Setup
 var tcpFrame = new TcpFrameServer(logger);
 
-tcpFrame.Started += () => logger.LogInformation("Started");
+// tcpFrame.Config.SetCertificateFromPemFile(@"C:\Users\mbwil\RiderProjects\rusty-rat\certificates\out\combined.pem");
+
+tcpFrame.Started += () => logger.LogInformation("Started: Listening on port {Port}", tcpFrame.Port);
 tcpFrame.Stopped += () => logger.LogInformation("Stopped");
 tcpFrame.ClientConnected += async channel =>
 {

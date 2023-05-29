@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
+using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -39,7 +40,7 @@ public class TcpFrameServer : TcpFrameBase
             {
                 IChannelPipeline pipeline = channel.Pipeline;
                 if (Config.Certificate != null)
-                    pipeline.AddLast("tls", Config.GetEncryption());
+                    pipeline.AddLast("tls", TlsHandler.Server(Config.Certificate));
                 pipeline.AddLast("framing-enc", Config.GetEncoder());
                 pipeline.AddLast("framing-dec", Config.GetDecoder());
                 pipeline.AddLast("handler", new TcpHandlerServer(this));

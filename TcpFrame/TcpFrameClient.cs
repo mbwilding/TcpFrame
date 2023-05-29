@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
+using DotNetty.Handlers.Tls;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
@@ -42,7 +43,7 @@ public class TcpFrameClient : TcpFrameBase
             {
                 IChannelPipeline pipeline = channel.Pipeline;
                 if (Config.Certificate != null)
-                    pipeline.AddLast("tls", Config.GetEncryption());
+                    pipeline.AddLast("tls", TlsHandler.Client(Host, Config.Certificate));
                 pipeline.AddLast("framing-enc", Config.GetEncoder());
                 pipeline.AddLast("framing-dec", Config.GetDecoder());
                 pipeline.AddLast("handler", new TcpHandlerClient(this));
@@ -174,16 +175,16 @@ public class TcpFrameClient : TcpFrameBase
         }
     }
 
-    private async Task<string?> GetIPv4AddressAsync(string host)
+    private async Task<IPAddress?> GetIPv4AddressAsync(string host)
     {
         if (string.Equals(Host, Dns.GetHostName(), StringComparison.CurrentCultureIgnoreCase))
         {
-            return "127.0.0.1";
+            return IPAddress.Parse("127.0.0.1");
         }
         
         var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
         var address = addresses.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-        return address?.ToString();
+        return address;
     }
     
     public new async ValueTask DisposeAsync()
