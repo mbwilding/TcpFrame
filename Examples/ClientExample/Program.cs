@@ -15,8 +15,6 @@ var logger = loggerFactory.CreateLogger<TcpFrameClient>();
 // Setup
 var tcpFrame = new TcpFrameClient(logger);
 
-// tcpFrame.Config.SetCertificateFromPemFile(@"C:\Users\mbwil\RiderProjects\rusty-rat\certificates\out\combined.pem");
-
 tcpFrame.Connected += () => logger.LogInformation("Connected");
 tcpFrame.Disconnected += () => logger.LogInformation("Disconnected");
 tcpFrame.MessageReceived += bytes =>
