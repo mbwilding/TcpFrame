@@ -19,24 +19,31 @@ tcpFrame.Started += () => logger.LogInformation("Started: Listening on port {Por
 tcpFrame.Stopped += () => logger.LogInformation("Stopped");
 tcpFrame.ClientConnected += async channel =>
 {
-    await tcpFrame.SendToAllAsync("Client connected"u8.ToArray());
+    string id = channel.Id.AsShortText();
+    await tcpFrame.SendAsync(channel, "[Server] Connected");
+    await tcpFrame.SendToAllAsync($"[{id}] Client connected");
     logger.LogInformation("Client connected: {Ip}", channel.RemoteAddress.ToString());
 };
 tcpFrame.ClientDisconnected += async channel =>
 {
-    await tcpFrame.SendToAllAsync("Client disconnected"u8.ToArray());
+    string id = channel.Id.AsShortText();
+    await tcpFrame.SendToAllAsync($"[{id}] Client disconnected");
     logger.LogInformation("Client disconnected: {Ip}", channel.RemoteAddress.ToString());
 };
 tcpFrame.MessageReceived += async (channel, bytes) =>
 {
     string id = channel.Id.AsShortText();
     string message = Encoding.UTF8.GetString(bytes);
-    logger.LogInformation("Received [{Id}]: {Message}", id, message);
-    await tcpFrame.SendAsync(channel, "Ack"u8.ToArray());
+    logger.LogInformation("[{Id}] {Message}", id, message);
+    await tcpFrame.SendToAllAsync($"[{id}] {message}");
 };
 
 // Connect
 await tcpFrame.StartAsync();
 
-// Prevent exit
-Console.ReadKey();
+// Chat loop
+while (true)
+{
+    var message = Console.ReadLine()!;
+    await tcpFrame.SendToAllAsync($"[Server] {message}");
+}

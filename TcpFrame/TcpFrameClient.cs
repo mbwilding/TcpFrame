@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Handlers.Tls;
@@ -68,7 +69,7 @@ public class TcpFrameClient : TcpFrameBase
                 return false;
             }
 
-            Logger?.LogDebug("Attempting connection: {Host}:{Port}", ipAddress, Port);
+            Logger?.LogTrace("Attempting connection: {Host}:{Port}", ipAddress, Port);
             Channel = await _bootstrap.ConnectAsync(ipAddress, Port).ConfigureAwait(false);
             return true;
         }
@@ -100,9 +101,9 @@ public class TcpFrameClient : TcpFrameBase
         }
     }
 
-    public async Task SendAsync(byte[] message)
+    public async Task SendAsync(byte[] data)
     {
-        IByteBuffer buffer = Unpooled.WrappedBuffer(message);
+        IByteBuffer buffer = Unpooled.WrappedBuffer(data);
 
         if (!IsActive)
         {
@@ -113,12 +114,18 @@ public class TcpFrameClient : TcpFrameBase
         if (Channel != null)
         {
             await Channel.WriteAndFlushAsync(buffer).ConfigureAwait(false);
-            Logger?.LogDebug("Sent: {Bytes} bytes", message.Length);
+            Logger?.LogTrace("Sent: {Bytes} bytes", data.Length);
         }
         else
         {
             Logger?.LogError("Channel is null");
         }
+    }
+    
+    public async Task SendAsync(string message)
+    {
+        var data = Encoding.UTF8.GetBytes(message);
+        await SendAsync(data);
     }
 
     private class TcpHandlerClient : SimpleChannelInboundHandler<IByteBuffer>
@@ -135,7 +142,7 @@ public class TcpFrameClient : TcpFrameBase
             var channel = ctx.Channel;
             base.ChannelActive(ctx);
             _tcpFrame.Connected?.Invoke();
-            _tcpFrame.Logger?.LogDebug("Connected {IpAddress}", channel.RemoteAddress.ToString());
+            _tcpFrame.Logger?.LogTrace("Connected {IpAddress}", channel.RemoteAddress.ToString());
         }
 
         public override async void ChannelInactive(IChannelHandlerContext ctx)
@@ -143,7 +150,7 @@ public class TcpFrameClient : TcpFrameBase
             var channel = ctx.Channel;
             base.ChannelInactive(ctx);
             _tcpFrame.Disconnected?.Invoke();
-            _tcpFrame.Logger?.LogDebug("Disconnected {IpAddress}", channel.RemoteAddress.ToString());
+            _tcpFrame.Logger?.LogTrace("Disconnected {IpAddress}", channel.RemoteAddress.ToString());
 
             if (_tcpFrame.AutoReconnect)
             {
@@ -151,7 +158,7 @@ public class TcpFrameClient : TcpFrameBase
 
                 while (!_tcpFrame.IsActive)
                 {
-                    _tcpFrame.Logger?.LogDebug("Attempting reconnection");
+                    _tcpFrame.Logger?.LogTrace("Attempting reconnection");
                     await _tcpFrame.ConnectAsync().ConfigureAwait(false);
                     await Task.Delay(_tcpFrame.ReconnectDelay).ConfigureAwait(false);
                 }
@@ -164,7 +171,7 @@ public class TcpFrameClient : TcpFrameBase
             var byteArray = new byte[msg.ReadableBytes];
             msg.ReadBytes(byteArray);
             _tcpFrame.MessageReceived?.Invoke(byteArray);
-            _tcpFrame.Logger?.LogDebug("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(),
+            _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(),
                 msg.ReadableBytes);
         }
 

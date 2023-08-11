@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Handlers.Tls;
@@ -53,7 +54,7 @@ public class TcpFrameServer : TcpFrameBase
         {
             Channel = await _bootstrap.BindAsync(Port).ConfigureAwait(false);
             Started?.Invoke();
-            Logger?.LogDebug("Server started: {Port}", Port);
+            Logger?.LogTrace("Server started: {Port}", Port);
             return true;
         }
         catch (Exception ex)
@@ -74,7 +75,7 @@ public class TcpFrameServer : TcpFrameBase
                 await Channel.CloseCompletion.ConfigureAwait(false);
                 Channel = null;
                 Stopped?.Invoke();
-                Logger?.LogDebug("Server stopped");
+                Logger?.LogTrace("Server stopped");
             }
             else
             {
@@ -99,18 +100,30 @@ public class TcpFrameServer : TcpFrameBase
         {
             IByteBuffer buffer = Unpooled.WrappedBuffer(data);
             await channel.WriteAndFlushAsync(buffer).ConfigureAwait(false);
-            Logger?.LogDebug("Sent {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), data.Length);
+            Logger?.LogTrace("Sent {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), data.Length);
         }
         catch (Exception ex)
         {
             Logger?.LogError(ex, "Failed to send data");
         }
     }
+    
+    public async Task SendAsync(IChannel channel, string message)
+    {
+        var data = Encoding.UTF8.GetBytes(message);
+        await SendAsync(channel, data).ConfigureAwait(false);
+    }
 
     public async Task SendToAllAsync(byte[] data)
     {
         var sendTasks = ClientChannels.Select(channel => SendAsync(channel, data));
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
+    }
+    
+    public async Task SendToAllAsync(string message)
+    {
+        var data = Encoding.UTF8.GetBytes(message);
+        await SendToAllAsync(data).ConfigureAwait(false);
     }
 
     private class TcpHandlerServer : SimpleChannelInboundHandler<IByteBuffer>
@@ -128,7 +141,7 @@ public class TcpFrameServer : TcpFrameBase
             _tcpFrame.ClientChannels.Add(channel);
             base.ChannelActive(ctx);
             _tcpFrame.ClientConnected?.Invoke(channel);
-            _tcpFrame.Logger?.LogDebug("Connected {IpAddress}", channel.RemoteAddress.ToString());
+            _tcpFrame.Logger?.LogTrace("Connected {IpAddress}", channel.RemoteAddress.ToString());
         }
 
         public override void ChannelInactive(IChannelHandlerContext ctx)
@@ -137,7 +150,7 @@ public class TcpFrameServer : TcpFrameBase
             _tcpFrame.ClientChannels.Remove(channel);
             base.ChannelInactive(ctx);
             _tcpFrame.ClientDisconnected?.Invoke(channel);
-            _tcpFrame.Logger?.LogDebug("Disconnected {IpAddress}", channel.RemoteAddress.ToString());
+            _tcpFrame.Logger?.LogTrace("Disconnected {IpAddress}", channel.RemoteAddress.ToString());
         }
 
         protected override void ChannelRead0(IChannelHandlerContext ctx, IByteBuffer msg)
@@ -146,8 +159,7 @@ public class TcpFrameServer : TcpFrameBase
             var byteArray = new byte[msg.ReadableBytes];
             msg.ReadBytes(byteArray);
             _tcpFrame.MessageReceived?.Invoke(channel, byteArray);
-            _tcpFrame.Logger?.LogDebug("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(),
-                msg.ReadableBytes);
+            _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), msg.ReadableBytes);
         }
 
         public override async void ExceptionCaught(IChannelHandlerContext ctx, Exception ex)

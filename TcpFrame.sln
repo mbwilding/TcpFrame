@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerExample", "Examples\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpFrame.Tests", "TcpFrame.Tests\TcpFrame.Tests.csproj", "{469078A5-CFA8-437D-9AFF-EA484BAE69B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGuiExample", "Examples\ClientGuiExample\ClientGuiExample.csproj", "{07C2291B-4FEC-4F44-8726-9CE7CB98E920}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,9 +34,14 @@ Global
 		{469078A5-CFA8-437D-9AFF-EA484BAE69B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469078A5-CFA8-437D-9AFF-EA484BAE69B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{469078A5-CFA8-437D-9AFF-EA484BAE69B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07C2291B-4FEC-4F44-8726-9CE7CB98E920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07C2291B-4FEC-4F44-8726-9CE7CB98E920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07C2291B-4FEC-4F44-8726-9CE7CB98E920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07C2291B-4FEC-4F44-8726-9CE7CB98E920}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E08E0A22-A8F3-402C-A925-1847D9DCBCEB} = {6B09FBC0-1893-40B0-9D03-093F802FF963}
 		{03C652AC-CB54-42EE-8208-D8DFBEF5C9A3} = {6B09FBC0-1893-40B0-9D03-093F802FF963}
+		{07C2291B-4FEC-4F44-8726-9CE7CB98E920} = {6B09FBC0-1893-40B0-9D03-093F802FF963}
 	EndGlobalSection
 EndGlobal

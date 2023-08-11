@@ -20,18 +20,15 @@ tcpFrame.Disconnected += () => logger.LogInformation("Disconnected");
 tcpFrame.MessageReceived += bytes =>
 {
     string message = Encoding.UTF8.GetString(bytes);
-    logger.LogInformation("Received: {Message}", message);
+    logger.LogInformation("{Message}", message);
 };
 
 // Connect
 await tcpFrame.ConnectAsync();
 
-// Wait
-while (!tcpFrame.IsActive)
-    await Task.Delay(100);
-
-// Send data
-await tcpFrame.SendAsync(Encoding.UTF8.GetBytes($"Hello from client: {tcpFrame.Channel?.Id.AsShortText()}"));
-
-// Prevent exit
-Console.ReadKey();
+// Chat loop
+while (true)
+{
+    var message = Console.ReadLine()!;
+    await tcpFrame.SendAsync(message);
+}
