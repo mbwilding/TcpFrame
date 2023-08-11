@@ -10,7 +10,9 @@ Alternatively, via the CLI `dotnet add package TcpFrame`
 
 ## Usage
 
-Check the examples folder for a working example.
+You can send either a string or a byte[].
+
+Check the examples folder for a basic working demo of a chat app demonstrating sending strings.
 
 ### Client
 
