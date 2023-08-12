@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable RedundantDefaultMemberInitializer
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace TcpFrame;
 
@@ -55,14 +56,14 @@ public class TcpFrameClient : TcpFrameBase
     {
         Host = host;
         Port = port;
-        return await ConnectAsync();
+        return await ConnectAsync().ConfigureAwait(false);
     }
     
     public async Task<bool> ConnectAsync()
     {
         try
         {
-            var ipAddress = await GetIPv4AddressAsync(Host);
+            var ipAddress = await GetIPv4AddressAsync(Host).ConfigureAwait(false);
             if (ipAddress == null)
             {
                 Logger?.LogError("Cannot resolve hostname to IP address: {Host}", Host);
@@ -121,11 +122,17 @@ public class TcpFrameClient : TcpFrameBase
             Logger?.LogError("Channel is null");
         }
     }
+
+    public async Task SendAsync<T>(T data, Func<T, byte[]> serializer) where T : class
+    {
+        var bytes = serializer.Invoke(data);
+        await SendAsync(bytes).ConfigureAwait(false);
+    }
     
     public async Task SendAsync(string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
-        await SendAsync(data);
+        await SendAsync(data).ConfigureAwait(false);
     }
 
     private class TcpHandlerClient : SimpleChannelInboundHandler<IByteBuffer>
@@ -171,8 +178,7 @@ public class TcpFrameClient : TcpFrameBase
             var byteArray = new byte[msg.ReadableBytes];
             msg.ReadBytes(byteArray);
             _tcpFrame.MessageReceived?.Invoke(byteArray);
-            _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(),
-                msg.ReadableBytes);
+            _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), msg.ReadableBytes);
         }
 
         public override async void ExceptionCaught(IChannelHandlerContext ctx, Exception ex)

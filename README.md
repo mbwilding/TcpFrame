@@ -96,6 +96,34 @@ var tcpFrame = new TcpFrameClient(logger)
 await tcpFrame.StartAsync();
 ```
 
+### Modular Serialization
+
+These examples are for the client side, but the same principle apply to the server for unicast, multicast and broadcast.
+
+#### JSON
+```csharp
+byte[] JsonSerializer<T>(T data)
+{
+    var json = System.Text.Json.JsonSerializer.Serialize(data);
+    return Encoding.UTF8.GetBytes(json);
+}
+
+var objectToBeSerialized = new { };
+var tcpFrame = new TcpFrameClient();
+await tcpFrame.ConnectAsync();
+await tcpFrame.SendAsync(objectToBeSerialized, JsonSerializer);
+```
+
+#### MessagePack
+```csharp
+byte[] MessagePackSerializer<T>(T data) => MessagePack.MessagePackSerializer.Serialize(data);
+
+var objectToBeSerialized = new { };
+var tcpFrame = new TcpFrameClient();
+await tcpFrame.ConnectAsync();
+await tcpFrame.SendAsync(objectToBeSerialized, MessagePackSerializer);
+```
+
 ## Rust - Tokio Framing Interop
 
 I wrote this wrapper for [DotNetty](https://github.com/Azure/DotNetty) so I could communicate with my rust service that utilizes framing. The defaults of TcpFrame suits tokio framing with the defaults.
@@ -133,7 +161,7 @@ As a side note, rust handles its enums as arrays compared to dotnet which handle
 
 Contributions to TcpFrame are welcome! If you find any issues or have ideas for improvements, please open an issue or submit a pull request on the Github repository: https://github.com/mbwilding/TcpFrame.
 
-When contributing, please follow the existing code style and conventions. Additionally, make sure to thoroughly test your changes and provide appropriate documentation.
+When contributing, please follow the existing code style and conventions. Additionally, make sure to thoroughly test your changes, add unit tests and provide appropriate documentation.
 
 ## License
 

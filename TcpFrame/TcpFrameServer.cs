@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 // ReSharper disable UnusedMethodReturnValue.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace TcpFrame;
 
@@ -108,6 +109,12 @@ public class TcpFrameServer : TcpFrameBase
         }
     }
     
+    public async Task UnicastAsync<T>(IChannel channel, T data, Func<T, byte[]> serializer) where T : class
+    {
+        var bytes = serializer.Invoke(data);
+        await UnicastAsync(channel, bytes).ConfigureAwait(false);
+    }
+    
     public async Task UnicastAsync(IChannel channel, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
@@ -120,6 +127,12 @@ public class TcpFrameServer : TcpFrameBase
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
     }
     
+    public async Task UnicastAsync<T>(IEnumerable<IChannel> channels, T data, Func<T, byte[]> serializer) where T : class
+    {
+        var bytes = serializer.Invoke(data);
+        await MulticastAsync(channels, bytes).ConfigureAwait(false);
+    }
+    
     public async Task MulticastAsync(IEnumerable<IChannel> channels, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
@@ -130,6 +143,12 @@ public class TcpFrameServer : TcpFrameBase
     {
         var sendTasks = ClientChannels.Select(channel => UnicastAsync(channel, data));
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
+    }
+    
+    public async Task BroadcastAsync<T>(T data, Func<T, byte[]> serializer) where T : class
+    {
+        var bytes = serializer.Invoke(data);
+        await BroadcastAsync(bytes).ConfigureAwait(false);
     }
     
     public async Task BroadcastAsync(string message)
