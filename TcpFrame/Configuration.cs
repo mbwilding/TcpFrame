@@ -62,7 +62,7 @@ public class Configuration
     public void SetCertificateFromPemFiles(string certPath, string keyPath) =>
         Certificate = SanitizeCertificate(X509Certificate2.CreateFromPemFile(certPath, keyPath));
 
-    private X509Certificate2 SanitizeCertificate(X509Certificate2 certificate)
+    public static X509Certificate2 SanitizeCertificate(X509Certificate2 certificate)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

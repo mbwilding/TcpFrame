@@ -14,17 +14,61 @@ You can send either a string or a byte[].
 
 Check the examples folder for a basic working demo of a chat app demonstrating sending strings.
 
-### Client
+## Getting Started
+
+You can pass in an optional ILogger when instantiating TcpFrame.
+
+### Server (Simple)
+
+```csharp
+var tcpFrame = new TcpFrameServer();
+await tcpFrame.StartAsync();
+```
+
+### Client (Simple)
 
 ```csharp
 var tcpFrame = new TcpFrameClient();
 await tcpFrame.ConnectAsync();
 ```
 
-### Client Advanced (Optional ILogger)
+### Server (Advanced)
 
 ```csharp
-var tcpFrame = new TcpFrameClient(logger)
+var tcpFrame = new TcpFrameClient()
+{
+    Port = 9000,
+    Config = new Configuration
+    {
+        EventLoopGroup = new MultithreadEventLoopGroup(),
+        Shared = new Configuration.General
+        {
+            ByteOrder = ByteOrder.BigEndian,
+            LengthFieldLength = 4,
+            LengthAdjustment = 0
+        },
+        Encoder = new Configuration.Encoding
+        {
+            LengthFieldIncludesLengthFieldLength = false
+        },
+        Decoder = new Configuration.Decoding
+        {
+            MaxFrameLength = 8 * 1_024 * 1_024,
+            LengthFieldOffset = 0,
+            InitialBytesToStrip = 4,
+            FailFast = false
+        },
+        // Certificate = X509Certificate2
+    }
+};
+
+await tcpFrame.StartAsync();
+```
+
+### Client (Advanced)
+
+```csharp
+var tcpFrame = new TcpFrameClient()
 {
     Host = "127.0.0.1",
     Port = 9000,
@@ -50,57 +94,20 @@ var tcpFrame = new TcpFrameClient(logger)
             LengthFieldOffset = 0,
             InitialBytesToStrip = 4,
             FailFast = false
-        }
+        },
+        // Certificate = X509Certificate2
     }
 };
 
 await tcpFrame.ConnectAsync();
 ```
 
-### Server
+## Modular Serialization
 
-```csharp
-var tcpFrame = new TcpFrameServer();
-await tcpFrame.StartAsync();
-```
+These examples are for the client side, but the same principle applies to the server for unicast, multicast and broadcast.
 
-### Server Advanced (Optional ILogger)
+### JSON
 
-```csharp
-var tcpFrame = new TcpFrameClient(logger)
-{
-    Port = 9000,
-    Config = new Configuration
-    {
-        EventLoopGroup = new MultithreadEventLoopGroup(),
-        Shared = new Configuration.General
-        {
-            ByteOrder = ByteOrder.BigEndian,
-            LengthFieldLength = 4,
-            LengthAdjustment = 0
-        },
-        Encoder = new Configuration.Encoding
-        {
-            LengthFieldIncludesLengthFieldLength = false
-        },
-        Decoder = new Configuration.Decoding
-        {
-            MaxFrameLength = 8 * 1_024 * 1_024,
-            LengthFieldOffset = 0,
-            InitialBytesToStrip = 4,
-            FailFast = false
-        }
-    }
-};
-
-await tcpFrame.StartAsync();
-```
-
-### Modular Serialization
-
-These examples are for the client side, but the same principle apply to the server for unicast, multicast and broadcast.
-
-#### JSON
 ```csharp
 byte[] JsonSerializer<T>(T data)
 {
@@ -114,7 +121,8 @@ await tcpFrame.ConnectAsync();
 await tcpFrame.SendAsync(objectToBeSerialized, JsonSerializer);
 ```
 
-#### MessagePack
+### MessagePack
+
 ```csharp
 byte[] MessagePackSerializer<T>(T data) => MessagePack.MessagePackSerializer.Serialize(data);
 
