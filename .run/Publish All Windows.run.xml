@@ -1,0 +1,8 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish All Windows" type="CompoundRunConfigurationType">
+    <toRun name="Publish Windows: ClientExample" type="DotNetFolderPublish" />
+    <toRun name="Publish Windows: ClientGuiIExample" type="DotNetFolderPublish" />
+    <toRun name="Publish Windows: ServerExample" type="DotNetFolderPublish" />
+    <method v="2" />
+  </configuration>
+</component>

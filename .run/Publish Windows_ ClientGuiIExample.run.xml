@@ -1,0 +1,6 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish Windows: ClientGuiIExample" type="DotNetFolderPublish" factoryName="Publish to folder">
+    <riderPublish configuration="Release" delete_existing_files="true" platform="Any CPU" produce_single_file="true" ready_to_run="true" runtime="win-x64" target_folder="$PROJECT_DIR$/Examples/!Published" target_framework="net7.0" uuid_high="559054501029105476" uuid_low="-8708100310107100896" />
+    <method v="2" />
+  </configuration>
+</component>
