@@ -1,26 +1,15 @@
 ﻿using System.Text;
-using Microsoft.Extensions.Logging;
-using Serilog;
 using TcpFrame;
 
-// Logging (Optional)
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .WriteTo.Console()
-    .CreateLogger();
-
-var loggerFactory = new LoggerFactory().AddSerilog();
-var logger = loggerFactory.CreateLogger<TcpFrameClient>();
-
 // Setup
-var tcpFrame = new TcpFrameClient(logger);
+var tcpFrame = new TcpFrameClient();
 
-tcpFrame.Connected += () => logger.LogInformation("Connected");
-tcpFrame.Disconnected += () => logger.LogInformation("Disconnected");
+tcpFrame.Connected += () => Console.WriteLine("*** Connected ***");
+tcpFrame.Disconnected += () => Console.WriteLine("*** Disconnected ***");
 tcpFrame.MessageReceived += bytes =>
 {
     string message = Encoding.UTF8.GetString(bytes);
-    logger.LogInformation("{Message}", message);
+    Console.WriteLine(message);
 };
 
 // Connect
@@ -29,6 +18,7 @@ await tcpFrame.ConnectAsync();
 // Chat loop
 while (true)
 {
-    var message = Console.ReadLine()!;
+    var message = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(message)) continue;
     await tcpFrame.SendAsync(message);
 }

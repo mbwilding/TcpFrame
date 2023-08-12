@@ -16,10 +16,5 @@
         <ProjectReference Include="..\..\TcpFrame\TcpFrame.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Serilog" Version="3.0.1"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00910"/>
-    </ItemGroup>
 
 </Project>

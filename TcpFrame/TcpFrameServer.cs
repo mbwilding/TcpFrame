@@ -88,7 +88,7 @@ public class TcpFrameServer : TcpFrameBase
         }
     }
 
-    public async Task SendAsync(IChannel channel, byte[] data)
+    public async Task UnicastAsync(IChannel channel, byte[] data)
     {
         if (!channel.Active)
         {
@@ -108,22 +108,34 @@ public class TcpFrameServer : TcpFrameBase
         }
     }
     
-    public async Task SendAsync(IChannel channel, string message)
+    public async Task UnicastAsync(IChannel channel, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
-        await SendAsync(channel, data).ConfigureAwait(false);
+        await UnicastAsync(channel, data).ConfigureAwait(false);
     }
 
-    public async Task SendToAllAsync(byte[] data)
+    public async Task MulticastAsync(IEnumerable<IChannel> channels, byte[] data)
     {
-        var sendTasks = ClientChannels.Select(channel => SendAsync(channel, data));
+        var sendTasks = channels.Select(channel => UnicastAsync(channel, data));
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
     }
     
-    public async Task SendToAllAsync(string message)
+    public async Task MulticastAsync(IEnumerable<IChannel> channels, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
-        await SendToAllAsync(data).ConfigureAwait(false);
+        await MulticastAsync(channels, data).ConfigureAwait(false);
+    }
+    
+    public async Task BroadcastAsync(byte[] data)
+    {
+        var sendTasks = ClientChannels.Select(channel => UnicastAsync(channel, data));
+        await Task.WhenAll(sendTasks).ConfigureAwait(false);
+    }
+    
+    public async Task BroadcastAsync(string message)
+    {
+        var data = Encoding.UTF8.GetBytes(message);
+        await BroadcastAsync(data).ConfigureAwait(false);
     }
 
     private class TcpHandlerServer : SimpleChannelInboundHandler<IByteBuffer>

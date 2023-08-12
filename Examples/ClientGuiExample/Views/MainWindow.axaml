@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ClientGuiExample.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
+        x:Class="ClientGuiExample.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="ClientGuiExample"
+        Width="400" Height="300"
+        MinWidth="400" MinHeight="300">
+    
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Chat Messages Area -->
+        <Border Grid.Row="0" Background="#0D0D0D">
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" ScrollChanged="ScrollViewer_OnScrollChanged">
+                <TextBlock Margin="5, 5, 5, -15" TextWrapping="Wrap" Text="{Binding ChatLog}"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Text Input Box -->
+        <Grid Grid.Row="1" VerticalAlignment="Bottom" Background="#1A1A1A">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+    
+            <TextBox Grid.Column="0" Margin="5, 5, 0, 5" VerticalAlignment="Center" Watermark="Enter your message here..." Text="{Binding Input}" />
+            <Button Grid.Column="1" IsDefault="True" Margin="5" VerticalAlignment="Center" Content="Send" Command="{Binding SendAsync}" />
+        </Grid>
+    </Grid>
+
+</Window>
