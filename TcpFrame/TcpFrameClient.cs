@@ -58,7 +58,7 @@ public class TcpFrameClient : TcpFrameBase
         Port = port;
         return await ConnectAsync().ConfigureAwait(false);
     }
-    
+
     public async Task<bool> ConnectAsync()
     {
         try
@@ -128,7 +128,7 @@ public class TcpFrameClient : TcpFrameBase
         var bytes = serializer.Invoke(data);
         await SendAsync(bytes).ConfigureAwait(false);
     }
-    
+
     public async Task SendAsync(string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
@@ -192,14 +192,14 @@ public class TcpFrameClient : TcpFrameBase
     {
         if (string.Equals(Host, Dns.GetHostName(), StringComparison.CurrentCultureIgnoreCase))
         {
-            return IPAddress.Parse("127.0.0.1");
+            return IPAddress.Loopback;
         }
-        
+
         var addresses = await Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
         var address = addresses.FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
         return address;
     }
-    
+
     public new async ValueTask DisposeAsync()
     {
         await DisconnectAsync().ConfigureAwait(false);
