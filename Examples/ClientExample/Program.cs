@@ -6,7 +6,7 @@ var tcpFrame = new TcpFrameClient();
 
 tcpFrame.Connected += () => Console.WriteLine("*** Connected ***");
 tcpFrame.Disconnected += () => Console.WriteLine("*** Disconnected ***");
-tcpFrame.MessageReceived += bytes =>
+tcpFrame.Received += bytes =>
 {
     string message = Encoding.UTF8.GetString(bytes);
     Console.WriteLine(message);

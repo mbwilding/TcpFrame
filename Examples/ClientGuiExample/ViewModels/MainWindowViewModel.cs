@@ -13,7 +13,7 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel()
     {
         _tcpFrame = new TcpFrameClient();
-        _tcpFrame.MessageReceived += bytes => ChatLog += Encoding.UTF8.GetString(bytes) + "\n";
+        _tcpFrame.Received += bytes => ChatLog += Encoding.UTF8.GetString(bytes) + "\n";
         Task.Run(_tcpFrame.ConnectAsync);
     }
     

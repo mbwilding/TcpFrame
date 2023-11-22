@@ -29,9 +29,9 @@ public class TcpFrameServer : TcpFrameBase
 
     public event Action? Started;
     public event Action? Stopped;
-    public event Action<IChannel>? ClientConnected;
-    public event Action<IChannel>? ClientDisconnected;
-    public event Action<IChannel, byte[]>? MessageReceived;
+    public event Action<IChannel>? Connected;
+    public event Action<IChannel>? Disconnected;
+    public event Action<IChannel, byte[]>? Received;
 
     public TcpFrameServer(ILogger<TcpFrameServer>? logger = null) : base(logger)
     {
@@ -108,13 +108,13 @@ public class TcpFrameServer : TcpFrameBase
             Logger?.LogError(ex, "Failed to send data");
         }
     }
-    
+
     public async Task UnicastAsync<T>(IChannel channel, T data, Func<T, byte[]> serializer) where T : class
     {
         var bytes = serializer.Invoke(data);
         await UnicastAsync(channel, bytes).ConfigureAwait(false);
     }
-    
+
     public async Task UnicastAsync(IChannel channel, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
@@ -126,31 +126,31 @@ public class TcpFrameServer : TcpFrameBase
         var sendTasks = channels.Select(channel => UnicastAsync(channel, data));
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
     }
-    
+
     public async Task UnicastAsync<T>(IEnumerable<IChannel> channels, T data, Func<T, byte[]> serializer) where T : class
     {
         var bytes = serializer.Invoke(data);
         await MulticastAsync(channels, bytes).ConfigureAwait(false);
     }
-    
+
     public async Task MulticastAsync(IEnumerable<IChannel> channels, string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
         await MulticastAsync(channels, data).ConfigureAwait(false);
     }
-    
+
     public async Task BroadcastAsync(byte[] data)
     {
         var sendTasks = ClientChannels.Select(channel => UnicastAsync(channel, data));
         await Task.WhenAll(sendTasks).ConfigureAwait(false);
     }
-    
+
     public async Task BroadcastAsync<T>(T data, Func<T, byte[]> serializer) where T : class
     {
         var bytes = serializer.Invoke(data);
         await BroadcastAsync(bytes).ConfigureAwait(false);
     }
-    
+
     public async Task BroadcastAsync(string message)
     {
         var data = Encoding.UTF8.GetBytes(message);
@@ -171,7 +171,7 @@ public class TcpFrameServer : TcpFrameBase
             var channel = ctx.Channel;
             _tcpFrame.ClientChannels.Add(channel);
             base.ChannelActive(ctx);
-            _tcpFrame.ClientConnected?.Invoke(channel);
+            _tcpFrame.Connected?.Invoke(channel);
             _tcpFrame.Logger?.LogTrace("Connected {IpAddress}", channel.RemoteAddress.ToString());
         }
 
@@ -180,7 +180,7 @@ public class TcpFrameServer : TcpFrameBase
             var channel = ctx.Channel;
             _tcpFrame.ClientChannels.Remove(channel);
             base.ChannelInactive(ctx);
-            _tcpFrame.ClientDisconnected?.Invoke(channel);
+            _tcpFrame.Disconnected?.Invoke(channel);
             _tcpFrame.Logger?.LogTrace("Disconnected {IpAddress}", channel.RemoteAddress.ToString());
         }
 
@@ -189,7 +189,7 @@ public class TcpFrameServer : TcpFrameBase
             var channel = ctx.Channel;
             var byteArray = new byte[msg.ReadableBytes];
             msg.ReadBytes(byteArray);
-            _tcpFrame.MessageReceived?.Invoke(channel, byteArray);
+            _tcpFrame.Received?.Invoke(channel, byteArray);
             _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), msg.ReadableBytes);
         }
 

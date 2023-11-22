@@ -17,20 +17,20 @@ var tcpFrame = new TcpFrameServer(logger);
 
 tcpFrame.Started += () => logger.LogInformation("Started: Listening on port {Port}", tcpFrame.Port);
 tcpFrame.Stopped += () => logger.LogInformation("Stopped");
-tcpFrame.ClientConnected += async channel =>
+tcpFrame.Connected += async channel =>
 {
     string id = channel.Id.AsShortText();
     await tcpFrame.UnicastAsync(channel, "[Server] Connected");
     await tcpFrame.BroadcastAsync($"[{id}] Client connected");
     logger.LogInformation("[{Id}] Client connected: {Ip}", id, channel.RemoteAddress.ToString());
 };
-tcpFrame.ClientDisconnected += async channel =>
+tcpFrame.Disconnected += async channel =>
 {
     string id = channel.Id.AsShortText();
     await tcpFrame.BroadcastAsync($"[{id}] Client disconnected");
     logger.LogInformation("[{Id}] Client disconnected: {Ip}", id, channel.RemoteAddress.ToString());
 };
-tcpFrame.MessageReceived += async (channel, bytes) =>
+tcpFrame.Received += async (channel, bytes) =>
 {
     string id = channel.Id.AsShortText();
     string message = Encoding.UTF8.GetString(bytes);

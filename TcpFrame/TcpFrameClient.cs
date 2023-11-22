@@ -28,7 +28,7 @@ public class TcpFrameClient : TcpFrameBase
 
     public event Action? Connected;
     public event Action? Disconnected;
-    public event Action<byte[]>? MessageReceived;
+    public event Action<byte[]>? Received;
 
     public string Host { get; set; } = "127.0.0.1";
 
@@ -177,7 +177,7 @@ public class TcpFrameClient : TcpFrameBase
             var channel = ctx.Channel;
             var byteArray = new byte[msg.ReadableBytes];
             msg.ReadBytes(byteArray);
-            _tcpFrame.MessageReceived?.Invoke(byteArray);
+            _tcpFrame.Received?.Invoke(byteArray);
             _tcpFrame.Logger?.LogTrace("Received {IpAddress} | {Bytes} bytes", channel.RemoteAddress.ToString(), msg.ReadableBytes);
         }
 
